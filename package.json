@@ -1,0 +1,24 @@
+{
+  "name": "monorepo-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "nx.js",
+  "scripts": {
+    "start": "node ./nx.js run simple:test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wscats/monorepo-tutorial.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wscats/monorepo-tutorial/issues"
+  },
+  "homepage": "https://github.com/Wscats/monorepo-tutorial#readme",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "ignore": "^5.2.0",
+    "yargs-parser": "^21.0.0"
+  }
+}
