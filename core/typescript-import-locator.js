@@ -1,24 +1,11 @@
 const path = require("path");
-const strip_source_code_1 = require("./strip-source-code");
+const { stripSourceCode } = require("./strip-source-code");
+const app_root = require("./app-root");
 const { existsSync, readFileSync } = require("fs");
-
-const DependencyType = {
-    /**
-     * Static dependencies are tied to the loading of the module
-     */
-    static: 'static',
-    /**
-     * Dynamic dependencies are brought in by the module at run time
-     */
-    dynamic: 'dynamic',
-    /**
-     * Implicit dependencies are inferred
-     */
-    implicit: 'implicit',
-}
+const { DependencyType } = require("./type");
 
 function defaultFileRead(filePath) {
-    return readFileSync(path.join(appRootPath, filePath), 'utf-8');
+    return readFileSync(path.join(app_root.appRootPath, filePath), 'utf-8');
 }
 
 let tsModule;
@@ -36,7 +23,7 @@ class TypeScriptImportLocator {
             return;
         }
         const content = defaultFileRead(filePath);
-        const strippedContent = (0, strip_source_code_1.stripSourceCode)(this.scanner, content);
+        const strippedContent = stripSourceCode(this.scanner, content);
         if (strippedContent !== '') {
             const tsFile = tsModule.createSourceFile(filePath, strippedContent, tsModule.ScriptTarget.Latest, true);
             this.fromNode(filePath, tsFile, visitor);
@@ -89,7 +76,7 @@ class TypeScriptImportLocator {
         tsModule.forEachChild(node, (child) => this.fromNode(filePath, child, visitor));
     }
     ignoreStatement(node) {
-        return (0, strip_source_code_1.stripSourceCode)(this.scanner, node.getFullText()) === '';
+        return stripSourceCode(this.scanner, node.getFullText()) === '';
     }
     ignoreLoadChildrenDependency(contents) {
         this.scanner.setText(contents);

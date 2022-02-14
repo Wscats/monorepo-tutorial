@@ -10,6 +10,7 @@ const { buildWorkspaceProjectNodes } = require("./core/workspace-projects");
 const { resolveNewFormatWithInlineProjects } = require("./core/workspace");
 const { buildNpmPackageNodes } = require("./core/npm-packages");
 const { buildExplicitDependencies, jsPluginConfig } = require("./core/build-project-graph");
+const { buildImplicitProjectDependencies } = require("./core/implicit-project-dependencies");
 
 function findWorkspaceRoot(dir) {
     if (fs.existsSync(path.join(dir, 'angular.json'))) {
@@ -283,11 +284,11 @@ else if (running) {
             cachedFileData = {};
         }
         const context = createContext(workspaceJson, normalizedNxJson, projectFileMap, filesToProcess);
+        // buildProjectGraphUsingContext 使用作用域构建 projectGraph
         const builder = new ProjectGraphBuilder();
-
+        // 创建完 builder 之后，其实最关键是 getUpdatedProjectGraph
         buildWorkspaceProjectNodes(context, builder, workspace.dir);
         buildNpmPackageNodes(builder, workspace.dir);
-
         for (const proj of Object.keys(cachedFileData)) {
             for (const f of builder.graph.nodes[proj].data.files) {
                 const cached = cachedFileData[proj][f.file];
@@ -296,11 +297,14 @@ else if (running) {
                 }
             }
         }
-
-        await buildExplicitDependencies(jsPluginConfig(nxJson), ctx, builder);
-
+        // 分析 ts 代码的 import 依赖
+        await buildExplicitDependencies(jsPluginConfig(nxJson), context, builder);
+        buildImplicitProjectDependencies(context, builder);
         builder.setVersion(projectGraphVersion);
-        const initProjectGraph = builder.getUpdatedProjectGraph();
+        // 创建 projectGraph
+        const projectGraph = builder.getUpdatedProjectGraph();
+        // 缓存 projectGraph
+        const projectGraphCache = createCache(nxJson, packageJsonDeps, projectGraph, rootTsConfig);
 
         // const socket = net.connect('./d.sock');
         // socket.on('error', (err) => {

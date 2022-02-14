@@ -1,5 +1,7 @@
-const { TypeScriptImportLocator } = requre('./typescript-import-locator');
-import { TargetProjectLocator } from '../../target-project-locator';
+const { TypeScriptImportLocator } = require('./typescript-import-locator');
+const { TargetProjectLocator } = require('./target-project-locator');
+const { joinPathFragments } = require('./path')
+const { parseJson } = require("./devkit");
 
 function buildExplicitTypeScriptDependencies(
     workspace,
@@ -34,6 +36,95 @@ function buildExplicitTypeScriptDependencies(
         });
     });
     return res;
+}
+
+function processPackageJson(
+    sourceProject,
+    fileName,
+    graph,
+    collectedDeps,
+    packageNameMap
+) {
+    try {
+        const deps = readDeps(parseJson(defaultFileRead(fileName)));
+        // the name matches the import path
+        deps.forEach((d) => {
+            // package.json refers to another project in the monorepo
+            if (packageNameMap[d]) {
+                collectedDeps.push({
+                    sourceProjectName: sourceProject,
+                    targetProjectName: packageNameMap[d],
+                    sourceProjectFile: fileName,
+                });
+            } else if (graph.externalNodes[`npm:${d}`]) {
+                collectedDeps.push({
+                    sourceProjectName: sourceProject,
+                    targetProjectName: `npm:${d}`,
+                    sourceProjectFile: fileName,
+                });
+            }
+        });
+    } catch (e) {
+        if (process.env.NX_VERBOSE_LOGGING === 'true') {
+            console.log(e);
+        }
+    }
+}
+
+function readDeps(packageJsonDeps) {
+    // ??
+    return [
+        ...Object.keys(packageJsonDeps && packageJsonDeps.dependencies || {}),
+        ...Object.keys(packageJsonDeps && packageJsonDeps.devDependencies || {}),
+        ...Object.keys(packageJsonDeps && packageJsonDeps.peerDependencies || {}),
+    ];
+}
+
+function buildExplicitPackageJsonDependencies(
+    workspace,
+    graph,
+    filesToProcess
+) {
+    const res = [];
+    let packageNameMap = undefined;
+    Object.keys(filesToProcess).forEach((source) => {
+        Object.values(filesToProcess[source]).forEach((f) => {
+            if (isPackageJsonAtProjectRoot(graph.nodes, f.file)) {
+                // we only create the package name map once and only if a package.json file changes
+                packageNameMap = packageNameMap || createPackageNameMap(workspace);
+                processPackageJson(source, f.file, graph, res, packageNameMap);
+            }
+        });
+    });
+    return res;
+}
+
+function defaultFileRead(filePath) {
+    return fs.readFileSync(path.join(appRootPath, filePath), 'utf-8');
+}
+
+function createPackageNameMap(w) {
+    const res = {};
+    for (let projectName of Object.keys(w.projects)) {
+        try {
+            const packageJson = parseJson(
+                defaultFileRead(path.join(w.projects[projectName].root, 'package.json'))
+            );
+            res[packageJson.name || `@${w.npmScope}/${projectName}`] = projectName;
+        } catch (e) { }
+    }
+    return res;
+}
+
+function isPackageJsonAtProjectRoot(
+    nodes,
+    fileName
+) {
+    return Object.values(nodes).find(
+        (projectNode) =>
+            (projectNode.type === 'lib' || projectNode.type === 'app') &&
+            joinPathFragments(projectNode.data.root, 'package.json') === fileName
+    );
 }
 
 function buildExplicitTypescriptAndPackageJsonDependencies(
@@ -74,10 +165,10 @@ function jsPluginConfig(nxJson) {
     if (
         nxJson &&
         nxJson &&
-        nxJson?.pluginsConfig &&
-        nxJson?.pluginsConfig['@nrwl/js']
+        nxJson.pluginsConfig &&
+        nxJson.pluginsConfig['@nrwl/js']
     ) {
-        return nxJson?.pluginsConfig['@nrwl/js'];
+        return nxJson && nxJson.pluginsConfig['@nrwl/js'];
     } else {
         return {};
     }
@@ -126,7 +217,7 @@ function buildExplicitDependenciesWithoutWorkers(
             r.targetProjectName
         );
     });
-} Ï
+}
 
 function getNumberOfWorkers() {
     return process.env.NX_PROJECT_GRAPH_MAX_WORKERS

@@ -1,3 +1,5 @@
+const { DependencyType } = require("./type");
+
 /**
  * Builder for adding nodes and dependencies to a {@link ProjectGraph}
  */
@@ -6,6 +8,7 @@ class ProjectGraphBuilder {
     removedEdges;
 
     constructor(g) {
+        this.removedEdges = {};
         if (g) {
             this.graph = g;
         } else {

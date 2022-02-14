@@ -1,5 +1,5 @@
 let SyntaxKind;
-export function stripSourceCode(scanner, contents) {
+function stripSourceCode(scanner, contents) {
     if (!SyntaxKind) {
         SyntaxKind = require('typescript').SyntaxKind;
     }
@@ -96,3 +96,5 @@ export function stripSourceCode(scanner, contents) {
 
     return statements.join('\n');
 }
+
+module.exports = { stripSourceCode }
