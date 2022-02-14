@@ -1,10 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "demoapp": "apps/demoapp",
-    "demoapp2": "libs/demoapp2",
-    "eno": "apps/eno",
-    "eno-e2e": "apps/eno-e2e",
-    "simple": "libs/simple"
+    "core": "core"
   }
 }

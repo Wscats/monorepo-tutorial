@@ -2,7 +2,14 @@ const fs = require("fs");
 const path = require("path");
 const yargsParser = require("yargs-parser");
 const net = require("net");
-const { getFileHashes, getIgnoredGlobs } = require("./git-hash");
+const { existsSync } = require('fs-extra');
+const { getFileHashes, getIgnoredGlobs } = require("./core/git-hash");
+const { createProjectFileMap, updateProjectFileMap } = require("./core/file-map-utils");
+const { ProjectGraphBuilder } = require("./core/project-graph-builder");
+const { buildWorkspaceProjectNodes } = require("./core/workspace-projects");
+const { resolveNewFormatWithInlineProjects } = require("./core/workspace");
+const { buildNpmPackageNodes } = require("./core/npm-packages");
+
 function findWorkspaceRoot(dir) {
     if (fs.existsSync(path.join(dir, 'angular.json'))) {
         return { type: 'angular', dir };
@@ -19,6 +26,73 @@ function findWorkspaceRoot(dir) {
 function readJsonFile(path) {
     const content = fs.readFileSync(path, 'utf-8');
     return JSON.parse(content);
+}
+
+function normalizeNxJson(nxJson, projects) {
+    return nxJson.implicitDependencies
+        ? Object.assign(Object.assign({}, nxJson), {
+            implicitDependencies: Object.entries(nxJson.implicitDependencies).reduce((acc, [key, val]) => {
+                acc[key] = recur(projects, val);
+                return acc;
+            }, {})
+        }) : nxJson;
+}
+
+function recur(projects, v) {
+    if (v === '*') {
+        return projects;
+    }
+    else if (Array.isArray(v)) {
+        return v;
+    }
+    else {
+        return Object.keys(v).reduce((acc, key) => {
+            acc[key] = recur(projects, v[key]);
+            return acc;
+        }, {});
+    }
+}
+
+function readCombinedDeps(appRootPath) {
+    const json = readJsonFile(path.join(appRootPath, 'package.json'));
+    return { ...json.dependencies, ...json.devDependencies };
+}
+
+function readRootTsConfig(appRootPath) {
+    for (const tsConfigName of ['tsconfig.base.json', 'tsconfig.json']) {
+        const tsConfigPath = path.join(appRootPath, tsConfigName);
+        if (existsSync(tsConfigPath)) {
+            return readJsonFile(tsConfigPath);
+        }
+    }
+}
+
+function createContext(
+    workspaceJson,
+    nxJson,
+    fileMap,
+    filesToProcess
+) {
+    const projects = Object.keys(workspaceJson.projects).reduce((map, projectName) => {
+        map[projectName] = {
+            ...workspaceJson.projects[projectName],
+        };
+        return map;
+    }, {});
+    return {
+        workspace: {
+            ...workspaceJson,
+            ...nxJson,
+            projects,
+        },
+        fileMap,
+        filesToProcess,
+    };
+}
+
+function toNewFormat(w) {
+    const f = toNewFormatOrNull(w);
+    return f !== null && f !== void 0 ? f : w;
 }
 
 const runOne = [
@@ -84,8 +158,19 @@ const workspace = findWorkspaceRoot(process.cwd());
 const nxJsonPath = path.join(workspace.dir, 'nx.json');
 const workspaceJsonPath = path.join(workspace.dir, 'workspace.json');
 const nxJson = readJsonFile(nxJsonPath);
-const workspaceJson = readJsonFile(workspaceJsonPath);
-const workspaceConfig = Object.assign(Object.assign({}, workspaceJson), nxJson);
+const nxDepsJsonPath = path.join(workspace.dir, 'nx-deps.json');
+const nxDepsJson = fs.existsSync(nxDepsJsonPath) ? readJsonFile(nxDepsJsonPath) : null;
+// 转换 workspaceJson 的数据
+let workspaceJson = readJsonFile(workspaceJsonPath);
+// 本质 workspaceJson + project.json
+// 读取 workspaceJson 里所有子项目的 project.json 配置，并合并到 workspaceJson 的 projects 属性里面
+workspaceJson = resolveNewFormatWithInlineProjects(workspaceJson, workspace.dir);
+// 本质 workspaceJson + nx.json
+// readWorkspaceConfiguration，将 workspaceJson 和 nx.json 合并
+// 这里省略检测 nx.json 配置的合法性
+workspaceJson = Object.assign(Object.assign({}, workspaceJson), nxJson);
+
+
 // 这里会有个 parseRunOneOptions 来过滤参数
 const args = process.argv.slice(2);
 
@@ -157,8 +242,6 @@ else if (running) {
         // 将 parsedArgs (执行命令参数)拆分为 Nx 参数并覆盖，最终所有参数组合成 nxArgs
         const { nxArgs, overrides } = splitArgsIntoNxArgsAndOverrides(Object.assign(Object.assign({}, runOpts.parsedArgs), { configuration: runOpts.configuration, target: runOpts.target }), 'run-one');
 
-        console.log(workspaceConfig);
-
         // 使用 git 命令查看变更的文件
         const gitResult = await getFileHashes(workspace.dir);
         const ignore = getIgnoredGlobs(workspace.dir);
@@ -169,30 +252,74 @@ else if (running) {
             }
         });
 
-        console.log(gitResult);
-        console.log(fileHashes);
+        const allFileData = (() => {
+            const res = [];
+            fileHashes.forEach((hash, file) => {
+                res.push({
+                    file,
+                    hash,
+                });
+            });
+            res.sort((x, y) => x.file.localeCompare(y.file));
+            return res;
+        })()
+
+        // createProjectFileMap
         const projectGraphVersion = '5.0';
+        const { projectFileMap, allWorkspaceFiles } = createProjectFileMap(workspaceJson, allFileData);
+        const cacheEnabled = process.env.NX_CACHE_PROJECT_GRAPH !== 'false';
+        // 判断是否存在 nx_deps.json，如果层级执行过这个文件会被存储起来当缓存，并读取 nx_deps.json 缓存文件
+        let cache = nxDepsJson;
+        const normalizedNxJson = normalizeNxJson(nxJson, Object.keys(workspaceJson.projects));
+        const packageJsonDeps = readCombinedDeps(workspace.dir);
+        const rootTsConfig = readRootTsConfig(workspace.dir);
+        let filesToProcess;
+        let cachedFileData;
+        if (cache) {
 
-        const socket = net.connect('./d.sock');
-        socket.on('error', (err) => {
-            console.log('socekt error', err);
-        });
+        } else {
+            filesToProcess = projectFileMap;
+            cachedFileData = {};
+        }
+        const context = createContext(workspaceJson, normalizedNxJson, projectFileMap, filesToProcess);
+        const builder = new ProjectGraphBuilder();
 
-        socket.on('connect', () => {
-            socket.write('REQUEST_PROJECT_GRAPH_PAYLOAD');
-            let serializedProjectGraphResult = '';
-            socket.on('data', (data) => {
-                serializedProjectGraphResult += data.toString();
-            });
-            socket.on('end', () => {
-                try {
-                    const projectGraphResult = JSON.parse(serializedProjectGraphResult);
-                    console.log('projectGraphResult', projectGraphResult);
+        buildWorkspaceProjectNodes(context, builder, workspace.dir);
+        buildNpmPackageNodes(builder, workspace.dir);
+
+        for (const proj of Object.keys(cachedFileData)) {
+            for (const f of builder.graph.nodes[proj].data.files) {
+                const cached = cachedFileData[proj][f.file];
+                if (cached && cached.deps) {
+                    f.deps = [...cached.deps];
                 }
-                catch (e) {
-                    console.log('connect error', e);
-                }
-            });
-        });
+            }
+        }
+
+        builder.setVersion(projectGraphVersion);
+        const initProjectGraph = builder.getUpdatedProjectGraph();
+        
+        // const socket = net.connect('./d.sock');
+        // socket.on('error', (err) => {
+        //     console.log('socekt error', err);
+        // });
+
+        // socket.on('connect', () => {
+        //     socket.write('REQUEST_PROJECT_GRAPH_PAYLOAD');
+        //     let serializedProjectGraphResult = '';
+        //     socket.on('data', (data) => {
+        //         serializedProjectGraphResult += data.toString();
+        //     });
+        //     socket.on('end', () => {
+        //         try {
+        //             const projectGraphResult = JSON.parse(serializedProjectGraphResult);
+        //             console.log('projectGraphResult', projectGraphResult);
+        //         }
+        //         catch (e) {
+        //             console.log('connect error', e);
+        //         }
+        //     });
+        // });
+        console.log('end');
     })()
 }

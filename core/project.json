@@ -1,0 +1,35 @@
+{
+    "root": "core",
+    "targets": {
+      "build": {
+        "executor": "@nrwl/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/apps/demoapp",
+          "main": "apps/demoapp/src/index.ts",
+          "tsConfig": "apps/demoapp/tsconfig.app.json",
+          "assets": [
+            "apps/demoapp/*.md"
+          ]
+        }
+      },
+      "serve": {
+        "executor": "@nrwl/js:node",
+        "options": {
+          "buildTarget": "simple:test"
+        }
+      },
+      "make": {
+        "executor": "@nrwl/workspace:run-commands",
+        "options": {
+          "commands": [
+            {
+              "command": "node ./index.js"
+            }
+          ]
+        }
+      }
+    }
+  }
