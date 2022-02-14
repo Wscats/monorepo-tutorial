@@ -1,12 +1,7 @@
-
-
-
-import { buildExplicitPackageJsonDependencies } from './explicit-package-json-dependencies';
-
-import { TypeScriptImportLocator } from './typescript-import-locator';
+const { TypeScriptImportLocator } = requre('./typescript-import-locator');
 import { TargetProjectLocator } from '../../target-project-locator';
 
-export function buildExplicitTypeScriptDependencies(
+function buildExplicitTypeScriptDependencies(
     workspace,
     graph,
     filesToProcess
@@ -41,7 +36,7 @@ export function buildExplicitTypeScriptDependencies(
     return res;
 }
 
-export function buildExplicitTypescriptAndPackageJsonDependencies(
+function buildExplicitTypescriptAndPackageJsonDependencies(
     jsPluginConfig,
     workspace,
     projectGraph,
@@ -147,3 +142,4 @@ function totalNumberOfFilesToProcess(ctx) {
     return totalNumOfFilesToProcess;
 }
 
+module.exports = { buildExplicitDependencies, jsPluginConfig }

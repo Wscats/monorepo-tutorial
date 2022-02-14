@@ -1,7 +1,26 @@
 const path = require("path");
-const devkit_1 = require("@nrwl/devkit");
-const strip_source_code_1 = require("../../../utilities/strip-source-code");
-const file_utils_1 = require("../../file-utils");
+const strip_source_code_1 = require("./strip-source-code");
+const { existsSync, readFileSync } = require("fs");
+
+const DependencyType = {
+    /**
+     * Static dependencies are tied to the loading of the module
+     */
+    static: 'static',
+    /**
+     * Dynamic dependencies are brought in by the module at run time
+     */
+    dynamic: 'dynamic',
+    /**
+     * Implicit dependencies are inferred
+     */
+    implicit: 'implicit',
+}
+
+function defaultFileRead(filePath) {
+    return readFileSync(path.join(appRootPath, filePath), 'utf-8');
+}
+
 let tsModule;
 class TypeScriptImportLocator {
     constructor() {
@@ -16,7 +35,7 @@ class TypeScriptImportLocator {
             extension !== '.jsx') {
             return;
         }
-        const content = (0, file_utils_1.defaultFileRead)(filePath);
+        const content = defaultFileRead(filePath);
         const strippedContent = (0, strip_source_code_1.stripSourceCode)(this.scanner, content);
         if (strippedContent !== '') {
             const tsFile = tsModule.createSourceFile(filePath, strippedContent, tsModule.ScriptTarget.Latest, true);
@@ -28,7 +47,7 @@ class TypeScriptImportLocator {
             (tsModule.isExportDeclaration(node) && node.moduleSpecifier)) {
             if (!this.ignoreStatement(node)) {
                 const imp = this.getStringLiteralValue(node.moduleSpecifier);
-                visitor(imp, filePath, devkit_1.DependencyType.static);
+                visitor(imp, filePath, DependencyType.static);
             }
             return; // stop traversing downwards
         }
@@ -38,7 +57,7 @@ class TypeScriptImportLocator {
             tsModule.isStringLiteral(node.arguments[0])) {
             if (!this.ignoreStatement(node)) {
                 const imp = this.getStringLiteralValue(node.arguments[0]);
-                visitor(imp, filePath, devkit_1.DependencyType.dynamic);
+                visitor(imp, filePath, DependencyType.dynamic);
             }
             return;
         }
@@ -48,7 +67,7 @@ class TypeScriptImportLocator {
             tsModule.isStringLiteral(node.arguments[0])) {
             if (!this.ignoreStatement(node)) {
                 const imp = this.getStringLiteralValue(node.arguments[0]);
-                visitor(imp, filePath, devkit_1.DependencyType.static);
+                visitor(imp, filePath, DependencyType.static);
             }
             return;
         }
@@ -59,7 +78,7 @@ class TypeScriptImportLocator {
                 if (init.kind === tsModule.SyntaxKind.StringLiteral &&
                     !this.ignoreLoadChildrenDependency(node.getFullText())) {
                     const childrenExpr = this.getStringLiteralValue(init);
-                    visitor(childrenExpr, filePath, devkit_1.DependencyType.dynamic);
+                    visitor(childrenExpr, filePath, DependencyType.dynamic);
                     return; // stop traversing downwards
                 }
             }
@@ -107,3 +126,5 @@ class TypeScriptImportLocator {
         return node.getText().substr(1, node.getText().length - 2);
     }
 }
+
+module.exports = { TypeScriptImportLocator }

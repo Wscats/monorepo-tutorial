@@ -9,6 +9,7 @@ const { ProjectGraphBuilder } = require("./core/project-graph-builder");
 const { buildWorkspaceProjectNodes } = require("./core/workspace-projects");
 const { resolveNewFormatWithInlineProjects } = require("./core/workspace");
 const { buildNpmPackageNodes } = require("./core/npm-packages");
+const { buildExplicitDependencies, jsPluginConfig } = require("./core/build-project-graph");
 
 function findWorkspaceRoot(dir) {
     if (fs.existsSync(path.join(dir, 'angular.json'))) {
@@ -296,9 +297,11 @@ else if (running) {
             }
         }
 
+        await buildExplicitDependencies(jsPluginConfig(nxJson), ctx, builder);
+
         builder.setVersion(projectGraphVersion);
         const initProjectGraph = builder.getUpdatedProjectGraph();
-        
+
         // const socket = net.connect('./d.sock');
         // socket.on('error', (err) => {
         //     console.log('socekt error', err);
