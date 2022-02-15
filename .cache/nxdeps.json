@@ -67,6 +67,10 @@
             "hash": "0014838f477f899ddcee2c559df66c4a8fd4ed91"
           },
           {
+            "file": "core/default-tasks-runner.js",
+            "hash": "c6f2867f9eca0067ab89dba54039259ef6b922fe"
+          },
+          {
             "file": "core/devkit.js",
             "hash": "ae007cb6bd1a576f7be636421fa94bd9a3b10bee",
             "deps": [
@@ -112,6 +116,10 @@
           {
             "file": "core/project.json",
             "hash": "1922a42ef51e68e8d4e64dee09e05607866ade38"
+          },
+          {
+            "file": "core/run-command.js",
+            "hash": "d0018c280482a4f340b1abbba3c91a880e2443de"
           },
           {
             "file": "core/run-one.js",

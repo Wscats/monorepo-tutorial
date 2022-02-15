@@ -14,6 +14,7 @@ const { buildImplicitProjectDependencies } = require("./core/implicit-project-de
 const { createCache, writeCache } = require("./core/nx-deps-cache");
 const { projectGraphAdapter } = require('./core/project-graph');
 const { getProjects } = require('./core/run-one');
+const { runCommand } = require('./core/run-command');
 
 function findWorkspaceRoot(dir) {
     if (fs.existsSync(path.join(dir, 'angular.json'))) {
