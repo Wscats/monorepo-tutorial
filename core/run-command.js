@@ -2,6 +2,7 @@ function runCommand(projectsToRun, projectGraph, { nxJson }, nxArgs, overrides, 
     const { tasksRunner, runnerOptions } = getRunner(nxArgs, nxJson);
     console.log('runCommand');
     const tasksMap = [];
+    // 组合命令信息
     // createTasksForProjectToRun
     for (const project of projectsToRun) {
         tasksMap.push({
@@ -18,34 +19,6 @@ function runCommand(projectsToRun, projectGraph, { nxJson }, nxArgs, overrides, 
         })
     }
     console.log(tasksMap);
-}
-
-function createTasksForProjectToRun(
-    projectsToRun,
-    params,
-    projectGraph,
-    initiatingProject,
-    defaultDependencyConfigs = {}
-) {
-    const tasksMap = new Map();
-    const seenSet = new Set();
-
-    for (const project of projectsToRun) {
-        addTasksForProjectTarget(
-            {
-                project,
-                ...params,
-                errorIfCannotFindConfiguration: project.name === initiatingProject,
-            },
-            defaultDependencyConfigs,
-            projectGraph,
-            project.data.targets?.[params.target]?.executor,
-            tasksMap,
-            [],
-            seenSet
-        );
-    }
-    return Array.from(tasksMap.values());
 }
 
 function getRunner(nxArgs, nxJson) {

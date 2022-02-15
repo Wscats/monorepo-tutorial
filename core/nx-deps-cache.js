@@ -13,7 +13,7 @@ function createCache(
         version: projectGraph.version || '5.0',
         deps: packageJsonDeps,
         // compilerOptions may not exist, especially for repos converted through add-nx-to-monorepo
-        pathMappings: tsConfig?.compilerOptions?.paths || {},
+        pathMappings: tsConfig && tsConfig.compilerOptions && tsConfig.compilerOptions.paths || {},
         nxJsonPlugins,
         nodes: projectGraph.nodes,
         externalNodes: projectGraph.externalNodes,
@@ -34,7 +34,7 @@ function serializeJson(
     input,
     options
 ) {
-    return JSON.stringify(input, null, options?.spaces || 2) + '\n';
+    return JSON.stringify(input, null, options && options.spaces || 2) + '\n';
 }
 
 /**
@@ -50,7 +50,7 @@ function writeJsonFile(
     options
 ) {
     const serializedJson = serializeJson(data, options);
-    const content = options?.appendNewLine
+    const content = options && options.appendNewLine
         ? `${serializedJson}\n`
         : serializedJson;
     writeFileSync(path, content, { encoding: 'utf-8' });

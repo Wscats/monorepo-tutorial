@@ -99,7 +99,7 @@
           },
           {
             "file": "core/nx-deps-cache.js",
-            "hash": "99aa8f9717f1beafc8e3786a417970c863294aa0"
+            "hash": "9c8dd0fb92d8aa82fa506653a362a401fb09989a"
           },
           {
             "file": "core/path.js",
@@ -119,7 +119,7 @@
           },
           {
             "file": "core/run-command.js",
-            "hash": "d0018c280482a4f340b1abbba3c91a880e2443de"
+            "hash": "32b677fa504f3e709856d74c3458ba528b2c1247"
           },
           {
             "file": "core/run-one.js",
