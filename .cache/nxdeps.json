@@ -1,0 +1,248 @@
+{
+  "version": "5.0",
+  "deps": {
+    "fast-glob": "^3.2.11",
+    "fs-extra": "^10.0.0",
+    "ignore": "^5.2.0",
+    "jsonc-parser": "^3.0.0",
+    "typescript": "^4.5.5",
+    "yargs-parser": "^21.0.0"
+  },
+  "pathMappings": {
+    "@stores/demoapp2": [
+      "libs/demoapp2/src/index.ts"
+    ]
+  },
+  "nxJsonPlugins": [],
+  "nodes": {
+    "core": {
+      "name": "core",
+      "type": "lib",
+      "data": {
+        "root": "core",
+        "targets": {
+          "build": {
+            "executor": "@nrwl/js:tsc",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/demoapp",
+              "main": "apps/demoapp/src/index.ts",
+              "tsConfig": "apps/demoapp/tsconfig.app.json",
+              "assets": [
+                "apps/demoapp/*.md"
+              ]
+            }
+          },
+          "serve": {
+            "executor": "@nrwl/js:node",
+            "options": {
+              "buildTarget": "simple:test"
+            }
+          },
+          "make": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+              "commands": [
+                {
+                  "command": "node ./index.js"
+                }
+              ]
+            }
+          }
+        },
+        "tags": [],
+        "files": [
+          {
+            "file": "core/app-root.js",
+            "hash": "1be820df9be13a7179255eb294b74f722823b7f4"
+          },
+          {
+            "file": "core/build-project-graph.js",
+            "hash": "eb62d2ec5acce1df107b51f30f651bade96b339e"
+          },
+          {
+            "file": "core/client.js",
+            "hash": "0014838f477f899ddcee2c559df66c4a8fd4ed91"
+          },
+          {
+            "file": "core/devkit.js",
+            "hash": "ae007cb6bd1a576f7be636421fa94bd9a3b10bee",
+            "deps": [
+              "npm:jsonc-parser"
+            ]
+          },
+          {
+            "file": "core/file-map-utils.js",
+            "hash": "1b818887244da60821731491b2032f1a15bb1df3"
+          },
+          {
+            "file": "core/git-hash.js",
+            "hash": "482ab0d9fcee3b2aee1368dbd7ad48985b55cef3",
+            "deps": [
+              "npm:fs-extra",
+              "npm:ignore"
+            ]
+          },
+          {
+            "file": "core/implicit-project-dependencies.js",
+            "hash": "8870f764818de8c7876b150fad88060fe42166fd"
+          },
+          {
+            "file": "core/npm-packages.js",
+            "hash": "824f31fb0a8f09cf8799e56a59d8203a0875621b"
+          },
+          {
+            "file": "core/nx-deps-cache.js",
+            "hash": "99aa8f9717f1beafc8e3786a417970c863294aa0"
+          },
+          {
+            "file": "core/path.js",
+            "hash": "cd684ee874efb21223f60e3472c29c515cb3764a"
+          },
+          {
+            "file": "core/project-graph-builder.js",
+            "hash": "47a3bbaa03a0c7fc9cc3bed8332683ca2802888b"
+          },
+          {
+            "file": "core/project-graph.js",
+            "hash": "b60550af287192cb6b711e869de03e643395b308"
+          },
+          {
+            "file": "core/project.json",
+            "hash": "1922a42ef51e68e8d4e64dee09e05607866ade38"
+          },
+          {
+            "file": "core/run-one.js",
+            "hash": "7ed7a4dfeee5a2513d2eb5fb981b2ec003e01558"
+          },
+          {
+            "file": "core/server.js",
+            "hash": "17e6f819e4933f83b6808a52900f4ae5b9d6976e"
+          },
+          {
+            "file": "core/strip-source-code.js",
+            "hash": "69d10edf8801a03f0ae84bb275694fd4e57a1b4e",
+            "deps": [
+              "npm:typescript"
+            ]
+          },
+          {
+            "file": "core/target-project-locator.js",
+            "hash": "891bef6a0e695b6526166a926023c2997d4bf210"
+          },
+          {
+            "file": "core/type.js",
+            "hash": "cc5beafb4f85afc0ef43e318fe129c83b56bbd59"
+          },
+          {
+            "file": "core/typescript-import-locator.js",
+            "hash": "5ab83d3d05c716cd32ce98619bf4daab82f301e5",
+            "deps": [
+              "npm:typescript"
+            ]
+          },
+          {
+            "file": "core/typescript.js",
+            "hash": "538ff7139a4f23d9204268dc9bfbfe28b505e325",
+            "deps": [
+              "npm:typescript"
+            ]
+          },
+          {
+            "file": "core/workspace-projects.js",
+            "hash": "ce2037f17a095e246aece65cd0af1aed1d889853",
+            "deps": [
+              "npm:fs-extra",
+              "npm:fast-glob"
+            ]
+          },
+          {
+            "file": "core/workspace.js",
+            "hash": "57985926e32391f7a26afa7a7cad8e26df5ec081"
+          }
+        ]
+      }
+    }
+  },
+  "externalNodes": {
+    "npm:fast-glob": {
+      "type": "npm",
+      "name": "npm:fast-glob",
+      "data": {
+        "version": "^3.2.11",
+        "packageName": "fast-glob"
+      }
+    },
+    "npm:fs-extra": {
+      "type": "npm",
+      "name": "npm:fs-extra",
+      "data": {
+        "version": "^10.0.0",
+        "packageName": "fs-extra"
+      }
+    },
+    "npm:ignore": {
+      "type": "npm",
+      "name": "npm:ignore",
+      "data": {
+        "version": "^5.2.0",
+        "packageName": "ignore"
+      }
+    },
+    "npm:jsonc-parser": {
+      "type": "npm",
+      "name": "npm:jsonc-parser",
+      "data": {
+        "version": "^3.0.0",
+        "packageName": "jsonc-parser"
+      }
+    },
+    "npm:typescript": {
+      "type": "npm",
+      "name": "npm:typescript",
+      "data": {
+        "version": "^4.5.5",
+        "packageName": "typescript"
+      }
+    },
+    "npm:yargs-parser": {
+      "type": "npm",
+      "name": "npm:yargs-parser",
+      "data": {
+        "version": "^21.0.0",
+        "packageName": "yargs-parser"
+      }
+    }
+  },
+  "dependencies": {
+    "core": [
+      {
+        "source": "core",
+        "target": "npm:jsonc-parser",
+        "type": "static"
+      },
+      {
+        "source": "core",
+        "target": "npm:fs-extra",
+        "type": "static"
+      },
+      {
+        "source": "core",
+        "target": "npm:ignore",
+        "type": "static"
+      },
+      {
+        "source": "core",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "core",
+        "target": "npm:fast-glob",
+        "type": "static"
+      }
+    ]
+  }
+}

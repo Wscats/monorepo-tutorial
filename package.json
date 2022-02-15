@@ -4,7 +4,7 @@
   "description": "",
   "main": "nx.js",
   "scripts": {
-    "start": "node ./nx.js run simple:test"
+    "start": "node ./nx.js run core:test"
   },
   "repository": {
     "type": "git",

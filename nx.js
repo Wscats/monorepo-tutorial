@@ -11,6 +11,9 @@ const { resolveNewFormatWithInlineProjects } = require("./core/workspace");
 const { buildNpmPackageNodes } = require("./core/npm-packages");
 const { buildExplicitDependencies, jsPluginConfig } = require("./core/build-project-graph");
 const { buildImplicitProjectDependencies } = require("./core/implicit-project-dependencies");
+const { createCache, writeCache } = require("./core/nx-deps-cache");
+const { projectGraphAdapter } = require('./core/project-graph');
+const { getProjects } = require('./core/run-one');
 
 function findWorkspaceRoot(dir) {
     if (fs.existsSync(path.join(dir, 'angular.json'))) {
@@ -90,11 +93,6 @@ function createContext(
         fileMap,
         filesToProcess,
     };
-}
-
-function toNewFormat(w) {
-    const f = toNewFormatOrNull(w);
-    return f !== null && f !== void 0 ? f : w;
 }
 
 const runOne = [
@@ -269,6 +267,7 @@ else if (running) {
         // createProjectFileMap
         const projectGraphVersion = '5.0';
         const { projectFileMap, allWorkspaceFiles } = createProjectFileMap(workspaceJson, allFileData);
+        // 缓存是否启用
         const cacheEnabled = process.env.NX_CACHE_PROJECT_GRAPH !== 'false';
         // 判断是否存在 nx_deps.json，如果层级执行过这个文件会被存储起来当缓存，并读取 nx_deps.json 缓存文件
         let cache = nxDepsJson;
@@ -302,9 +301,29 @@ else if (running) {
         buildImplicitProjectDependencies(context, builder);
         builder.setVersion(projectGraphVersion);
         // 创建 projectGraph
-        const projectGraph = builder.getUpdatedProjectGraph();
+        let projectGraph = builder.getUpdatedProjectGraph();
         // 缓存 projectGraph
         const projectGraphCache = createCache(nxJson, packageJsonDeps, projectGraph, rootTsConfig);
+        // 写入 nxdeps.json 缓存文件到 .cache 文件夹
+        if (cacheEnabled) {
+            writeCache(projectGraphCache);
+        }
+        // projectGraph 项目图的向后兼容性适配器
+        // 这里如果是使用 5 的 nx 版本，但是是 4 版本的写法，会使用 projectGraphCompat5to4 函数转换一次
+        projectGraph = projectGraphAdapter('5.0', projectGraphVersion, projectGraph);
+        // 根据项目图配合命令 npm run xxx:xxx 参数寻找出 project.json 中对应的命令
+        const { projects, projectsMap } = getProjects(projectGraph, runOpts.project);
+        // 读取 nxJson 和 workspaceJson 作为环境
+        const env = { nxJson, workspaceJson, workspaceResults: null };
+        await runCommand(
+            projects,
+            projectGraph,
+            env,
+            nxArgs,
+            overrides,
+            'run-one',
+            runOpts.project
+        );
 
         // const socket = net.connect('./d.sock');
         // socket.on('error', (err) => {
