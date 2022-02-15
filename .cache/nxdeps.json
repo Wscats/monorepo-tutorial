@@ -1,6 +1,7 @@
 {
   "version": "5.0",
   "deps": {
+    "chalk": "^5.0.0",
     "fast-glob": "^3.2.11",
     "fs-extra": "^10.0.0",
     "ignore": "^5.2.0",
@@ -68,7 +69,7 @@
           },
           {
             "file": "core/default-tasks-runner.js",
-            "hash": "c6f2867f9eca0067ab89dba54039259ef6b922fe"
+            "hash": "f05d48c6111cc708ac25a7e3996ed40ba3fe33cd"
           },
           {
             "file": "core/devkit.js",
@@ -94,12 +95,23 @@
             "hash": "8870f764818de8c7876b150fad88060fe42166fd"
           },
           {
+            "file": "core/life-cycle.js",
+            "hash": "9240bcff4ba7d7b128b2779d33e452774ae86eb9"
+          },
+          {
             "file": "core/npm-packages.js",
             "hash": "824f31fb0a8f09cf8799e56a59d8203a0875621b"
           },
           {
             "file": "core/nx-deps-cache.js",
             "hash": "9c8dd0fb92d8aa82fa506653a362a401fb09989a"
+          },
+          {
+            "file": "core/output.js",
+            "hash": "2b76962aa3ba7dbcbc740d0138a4318372f1ebe6",
+            "deps": [
+              "npm:chalk"
+            ]
           },
           {
             "file": "core/path.js",
@@ -119,7 +131,7 @@
           },
           {
             "file": "core/run-command.js",
-            "hash": "32b677fa504f3e709856d74c3458ba528b2c1247"
+            "hash": "1da89188059566342a639f035a4172bb96c33b80"
           },
           {
             "file": "core/run-one.js",
@@ -128,6 +140,10 @@
           {
             "file": "core/server.js",
             "hash": "17e6f819e4933f83b6808a52900f4ae5b9d6976e"
+          },
+          {
+            "file": "core/static-run-one-terminal-output-life-cycle.js",
+            "hash": "909c770aa0fd22cab87b042a7b32d08d84ca3708"
           },
           {
             "file": "core/strip-source-code.js",
@@ -175,6 +191,14 @@
     }
   },
   "externalNodes": {
+    "npm:chalk": {
+      "type": "npm",
+      "name": "npm:chalk",
+      "data": {
+        "version": "^5.0.0",
+        "packageName": "chalk"
+      }
+    },
     "npm:fast-glob": {
       "type": "npm",
       "name": "npm:fast-glob",
@@ -239,6 +263,11 @@
       {
         "source": "core",
         "target": "npm:ignore",
+        "type": "static"
+      },
+      {
+        "source": "core",
+        "target": "npm:chalk",
         "type": "static"
       },
       {

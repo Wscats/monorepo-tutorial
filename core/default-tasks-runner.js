@@ -41,4 +41,4 @@ async function runAllTasks(tasks, options, context) {
     };
 }
 
-module.exports = { defaultTasksRunner, defaultTasksRunner }
+module.exports = defaultTasksRunner;

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Wscats/monorepo-tutorial#readme",
   "dependencies": {
+    "chalk": "^5.0.0",
     "fast-glob": "^3.2.11",
     "fs-extra": "^10.0.0",
     "ignore": "^5.2.0",

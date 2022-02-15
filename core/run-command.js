@@ -1,4 +1,28 @@
-function runCommand(projectsToRun, projectGraph, { nxJson }, nxArgs, overrides, terminalOutputStrategy, initiatingProject) {
+const { StaticRunOneTerminalOutputLifeCycle } = require('./static-run-one-terminal-output-life-cycle');
+const { CompositeLifeCycle } = require('./life-cycle');
+async function getTerminalOutputLifeCycle(
+    initiatingProject,
+    terminalOutputStrategy,
+    projectNames,
+    tasks,
+    nxArgs,
+    overrides,
+    runnerOptions
+) {
+    if (terminalOutputStrategy === 'run-one') {
+        return {
+            lifeCycle: new StaticRunOneTerminalOutputLifeCycle(
+                initiatingProject,
+                projectNames,
+                tasks,
+                nxArgs
+            ),
+            renderIsDone: Promise.resolve(),
+        };
+    }
+}
+
+async function runCommand(projectsToRun, projectGraph, { nxJson }, nxArgs, overrides, terminalOutputStrategy, initiatingProject) {
     const { tasksRunner, runnerOptions } = getRunner(nxArgs, nxJson);
     console.log('runCommand');
     const tasksMap = [];
@@ -18,6 +42,25 @@ function runCommand(projectsToRun, projectGraph, { nxJson }, nxArgs, overrides, 
 
         })
     }
+    const projectNames = projectsToRun.map((t) => t.name);
+    const { lifeCycle, renderIsDone } = await getTerminalOutputLifeCycle(initiatingProject, terminalOutputStrategy, projectNames, tasksMap, nxArgs, overrides, runnerOptions);
+    const lifeCycles = [lifeCycle];
+    // 使用 default-tasks-runner 来执行代码
+    const promiseOrObservable = tasksRunner(
+        tasksMap,
+        Object.assign(
+            Object.assign({}, runnerOptions), {
+            lifeCycle: new CompositeLifeCycle(lifeCycles)
+        }),
+        {
+            initiatingProject,
+            target: nxArgs.target,
+            projectGraph,
+            nxJson,
+        }
+    );
+
+
     console.log(tasksMap);
 }
 
