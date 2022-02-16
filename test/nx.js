@@ -17,7 +17,7 @@ const child = child_process.fork(
     // 添加参数给子进程
     // 将命令和参数传递到 cli.js 处理
     // 相当于运行 node cli run child:test
-    [command, commandArgs], { env: process.env.FORCE_COLOR }
+    [command, commandArgs]
 );
 child.on('error', (err) => {
     // 如果控制器中止，则这将在 err 为 AbortError 的情况下被调用
