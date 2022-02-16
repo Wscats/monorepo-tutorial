@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const { statSync, existsSync, readFileSync } = require("fs-extra");
 const { sync } = require("fast-glob");
 

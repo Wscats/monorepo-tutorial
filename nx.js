@@ -287,6 +287,8 @@ else if (running) {
         // buildProjectGraphUsingContext 使用作用域构建 projectGraph
         const builder = new ProjectGraphBuilder();
         // 创建完 builder 之后，其实最关键是 getUpdatedProjectGraph
+        // 这里会把 project.json 和 package.json 的命令做合并
+        // package.json 会默认使用 @nrwl/workspace:run-script 作为 executor 执行器
         buildWorkspaceProjectNodes(context, builder, workspace.dir);
         buildNpmPackageNodes(builder, workspace.dir);
         for (const proj of Object.keys(cachedFileData)) {

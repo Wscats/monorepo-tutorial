@@ -22,6 +22,12 @@
       "data": {
         "root": "core",
         "targets": {
+          "start": {
+            "executor": "@nrwl/workspace:run-script",
+            "options": {
+              "script": "start"
+            }
+          },
           "build": {
             "executor": "@nrwl/js:tsc",
             "outputs": [
@@ -62,10 +68,6 @@
           {
             "file": "core/build-project-graph.js",
             "hash": "eb62d2ec5acce1df107b51f30f651bade96b339e"
-          },
-          {
-            "file": "core/client.js",
-            "hash": "0014838f477f899ddcee2c559df66c4a8fd4ed91"
           },
           {
             "file": "core/default-tasks-runner.js",
@@ -114,6 +116,10 @@
             ]
           },
           {
+            "file": "core/package.json",
+            "hash": "07975e4f25e084cb1873a85f932409555ff0978f"
+          },
+          {
             "file": "core/path.js",
             "hash": "cd684ee874efb21223f60e3472c29c515cb3764a"
           },
@@ -131,15 +137,11 @@
           },
           {
             "file": "core/run-command.js",
-            "hash": "1da89188059566342a639f035a4172bb96c33b80"
+            "hash": "40e225c97aa0ab3440b3f2f5357fcfdb5a57cc38"
           },
           {
             "file": "core/run-one.js",
             "hash": "7ed7a4dfeee5a2513d2eb5fb981b2ec003e01558"
-          },
-          {
-            "file": "core/server.js",
-            "hash": "17e6f819e4933f83b6808a52900f4ae5b9d6976e"
           },
           {
             "file": "core/static-run-one-terminal-output-life-cycle.js",
@@ -176,7 +178,7 @@
           },
           {
             "file": "core/workspace-projects.js",
-            "hash": "ce2037f17a095e246aece65cd0af1aed1d889853",
+            "hash": "6af9de87be7524bb367d0e645a70b39a29905743",
             "deps": [
               "npm:fs-extra",
               "npm:fast-glob"
