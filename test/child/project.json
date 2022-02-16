@@ -1,0 +1,32 @@
+{
+  "root": "test/child",
+  "sourceRoot": "test/child",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "eno:build",
+        "hmr": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "eno:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/eno/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
