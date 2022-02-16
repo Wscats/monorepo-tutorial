@@ -1,8 +1,13 @@
 const child_process = require("child_process");
 const path = require("path");
 module.exports = {
-    default: (options) => {
-        const { args, project, target } = options;
+    default: (options, context) => {
+        const script = options.script;
+        delete options.script;
+        const args = [];
+        Object.keys(options).forEach((r) => {
+            args.push(`--${r}=${options[r]}`);
+        });
         child_process.execSync({
             install: 'npm install',
             add: 'npm install',
@@ -11,10 +16,10 @@ module.exports = {
             exec: 'npx',
             run: (script, args) => `npm run ${script} -- ${args}`,
             list: 'npm ls',
-        }.run(target, args.join(' ')), {
+        }.run(script, args), {
             stdio: ['inherit', 'inherit', 'inherit'],
             // 在 child 目录，运行 npm run test
-            cwd: path.join(__dirname, project),
+            cwd: path.join(__dirname, context.project),
         });
     }
 }
