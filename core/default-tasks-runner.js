@@ -15,7 +15,7 @@ const defaultTasksRunner = async (tasks, options, context) => {
     }
     options.lifeCycle.startCommand();
     try {
-        // return yield runAllTasks(tasks, options, context);
+        // return await runAllTasks(tasks, options, context);
     }
     catch (e) {
         console.error('Unexpected error:');
