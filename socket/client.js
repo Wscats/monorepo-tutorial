@@ -1,6 +1,7 @@
 const net = require("net");
 
 const socket = net.connect('./d.sock');
+
 socket.on('error', (err) => {
     console.log('socekt error', err);
 });
@@ -21,3 +22,5 @@ socket.on('connect', () => {
         }
     });
 });
+
+

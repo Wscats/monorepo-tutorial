@@ -42,10 +42,28 @@ async function stopServer() {
     });
 }
 
+function isServerAvailable() {
+    return new Promise((resolve) => {
+        try {
+            const socket = socket('./d.sock', () => {
+                socket.destroy();
+                resolve(true);
+            });
+            socket.once('error', () => {
+                resolve(false);
+            });
+        }
+        catch (err) {
+            resolve(false);
+        }
+    });
+}
 
 (async () => {
+    stopServer();
     try {
-        await startServer();
+        const isEnable = await isServerAvailable();
+        await !isEnable && startServer();
     } catch (err) {
         console.error('Something unexpected went wrong when starting the server');
         process.exit(1);

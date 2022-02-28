@@ -1,0 +1,9 @@
+{
+  "name": "monorepo-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "nx.js",
+  "scripts": {
+    "start": "node start"
+  }
+}

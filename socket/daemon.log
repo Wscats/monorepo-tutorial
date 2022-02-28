@@ -1,0 +1,16 @@
+Debugger attached.
+Waiting for the debugger to disconnect...
+internal/modules/cjs/loader.js:905
+  throw err;
+  ^
+
+Error: Cannot find module '/Users/eno/Documents/GitHub/monorepo-tutorial/server.js'
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:902:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:746:27)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Debugger attached.
+Started listening
