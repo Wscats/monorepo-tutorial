@@ -12,6 +12,7 @@
     <script src="./lodash.js"></script>
     <script>
         // 解析 {options.outputPath} 成一个函数，并配合 options 对象输出参数
+        // node_modules/@nrwl/workspace/src/tasks-runner/utils.js
         const template = _.template('{options.outputPath}',
             { interpolate: /{([\s\S]+?)}/g }
         )
