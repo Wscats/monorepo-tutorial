@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="./lodash.js"></script>
+    <script>
+        // 解析 {options.outputPath} 成一个函数，并配合 options 对象输出参数
+        const template = _.template('{options.outputPath}',
+            { interpolate: /{([\s\S]+?)}/g }
+        )
+        console.log(template({
+            options: {
+                assets: (2)['apps/demo/src/favicon.ico', 'apps/demo/src/assets'],
+                index: 'apps/demo/src/index.html',
+                main: 'apps/demo/src/main.tsx',
+                outputPath: 'dist/apps/demo',
+                polyfills: 'apps/demo/src/polyfills.ts',
+                scripts: [],
+                styles: (1)['apps/demo/src/styles.css'],
+                tsConfig: 'apps/demo/tsconfig.app.json',
+                webpackConfig: '@nrwl/react/plugins/webpack'
+            }
+        }))
+    </script>
+</body>
+
+</html>
