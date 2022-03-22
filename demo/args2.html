@@ -11,29 +11,10 @@
 <body>
     <script src="./lodash.js"></script>
     <script>
-        // 解析 {options.outputPath} 成一个函数，并配合 options 对象输出参数
-        // node_modules/@nrwl/workspace/src/tasks-runner/utils.js
-        const template = _.template('{options.outputPath} abc {options.tsConfig}',
-            { interpolate: /{([\s\S]+?)}/g }
-        )
-        console.log(template({
-            options: {
-                assets: (2)['apps/demo/src/favicon.ico', 'apps/demo/src/assets'],
-                index: 'apps/demo/src/index.html',
-                main: 'apps/demo/src/main.tsx',
-                outputPath: 'dist/apps/demo',
-                polyfills: 'apps/demo/src/polyfills.ts',
-                scripts: [],
-                styles: (1)['apps/demo/src/styles.css'],
-                tsConfig: 'apps/demo/tsconfig.app.json',
-                webpackConfig: '@nrwl/react/plugins/webpack'
-            }
-        }))
-
         function interpolateOutputs(template, data) {
             return template.replace(/{([\s\S]+?)}/g, (match) => {
                 let value = data;
-                let path = match.slice(1, -1).trim().split('.').slice(1);
+                let path = match.slice(1, -1).trim().split('.');
                 for (let idx = 0; idx < path.length; idx++) {
                     if (!value[path[idx]]) {
                         return;
@@ -45,9 +26,11 @@
             });
         }
 
-        console.log(interpolateOutputs('{options.outputPath} abc {options.abc.tsConfig}', {
-            abc: {
-                tsConfig: 'abc',
+        console.log(interpolateOutputs('{outputPath} abc {args.abc.tsConfig}', {
+            args: {
+                abc: {
+                    tsConfig: 'abc',
+                },
             },
             assets: (2)['apps/demo/src/favicon.ico', 'apps/demo/src/assets'],
             index: 'apps/demo/src/index.html',
