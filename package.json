@@ -4,7 +4,9 @@
   "description": "",
   "main": "nx.js",
   "scripts": {
-    "start": "node ./nx.js run core:test"
+    "start": "node ./nx.js run core:test",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,8 @@
     "jsonc-parser": "^3.0.0",
     "typescript": "^4.5.5",
     "yargs-parser": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
