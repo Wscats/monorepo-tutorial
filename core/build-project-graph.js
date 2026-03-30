@@ -1,3 +1,5 @@
+'use strict';
+
 const { TypeScriptImportLocator } = require('./typescript-import-locator');
 const { TargetProjectLocator } = require('./target-project-locator');
 const { joinPathFragments } = require('./path')

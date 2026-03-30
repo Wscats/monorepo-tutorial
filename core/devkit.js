@@ -1,3 +1,5 @@
+'use strict';
+
 const jsonc_parser = require("jsonc-parser");
 /**
  * Parses the given JSON string and returns the object the JSON content represents.

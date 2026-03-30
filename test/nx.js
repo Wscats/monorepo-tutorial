@@ -1,3 +1,5 @@
+'use strict';
+
 // node nx run child:test
 // process.argv[0] => node
 // process.argv[1] => nx

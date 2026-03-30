@@ -1,3 +1,5 @@
+'use strict';
+
 // const task_orchestrator_1 = require("./task-orchestrator");
 // const task_graph_creator_1 = require("./task-graph-creator");
 // const hasher_1 = require("../core/hasher/hasher");

@@ -1,3 +1,5 @@
+'use strict';
+
 const DependencyType = {
     /**
      * Static dependencies are tied to the loading of the module

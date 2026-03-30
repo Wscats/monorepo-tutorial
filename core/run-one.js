@@ -1,3 +1,5 @@
+'use strict';
+
 function getProjects(projectGraph, project) {
     let projects = [projectGraph.nodes[project]];
     let projectsMap = {

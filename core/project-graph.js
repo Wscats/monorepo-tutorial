@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Backwards compatibility adapter for project graph
  * @param {string} sourceVersion

@@ -1,3 +1,5 @@
+'use strict';
+
 const { statSync, existsSync, readFileSync } = require('fs-extra');
 const { spawn } = require('child_process');
 const path = require("path");

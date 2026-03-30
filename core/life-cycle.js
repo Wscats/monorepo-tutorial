@@ -1,3 +1,5 @@
+'use strict';
+
 class CompositeLifeCycle {
     constructor(lifeCycles) {
         this.lifeCycles = lifeCycles;

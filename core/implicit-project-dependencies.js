@@ -1,3 +1,5 @@
+'use strict';
+
 function buildImplicitProjectDependencies(ctx, builder) {
     Object.keys(ctx.workspace.projects).forEach((source) => {
         const p = ctx.workspace.projects[source];

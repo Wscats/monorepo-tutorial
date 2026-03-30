@@ -7,13 +7,16 @@
     "start": "node ./nx.js run core:test",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "test": "jest --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Wscats/monorepo-tutorial.git"
   },
-  "author": "",
+  "author": "wscats (https://github.com/wscats)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Wscats/monorepo-tutorial/issues"
@@ -30,5 +33,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "keywords": [
+    "monorepo",
+    "tutorial"
+  ]
 }

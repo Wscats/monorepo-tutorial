@@ -1,3 +1,5 @@
+'use strict';
+
 const { createServer, Server, Socket } = require("net");
 const { unlinkSync } = require('fs');
 

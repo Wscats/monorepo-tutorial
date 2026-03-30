@@ -1,3 +1,5 @@
+'use strict';
+
 const { StaticRunOneTerminalOutputLifeCycle } = require('./static-run-one-terminal-output-life-cycle');
 const { CompositeLifeCycle } = require('./life-cycle');
 async function getTerminalOutputLifeCycle(

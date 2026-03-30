@@ -1,3 +1,5 @@
+'use strict';
+
 const { writeFileSync } = require('fs');
 function createCache(
     nxJson,

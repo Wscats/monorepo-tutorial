@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require("path");
 const app_root = require("./app-root");
 const normalizedAppRoot = app_root.appRootPath.replace(/\\/g, '/');

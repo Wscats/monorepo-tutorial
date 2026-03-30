@@ -1,3 +1,5 @@
+'use strict';
+
 const typescript = require("./typescript");
 const path = require("path");
 const fs = require("fs");
@@ -150,7 +152,7 @@ class TargetProjectLocator {
         return { path, absolutePath, config: parseJson(content) };
     }
     findMatchingProjectFiles(file) {
-        for (let currentPath = file; currentPath != (0, path.dirname)(currentPath); currentPath = (0, path.dirname)(currentPath)) {
+        for (let currentPath = file; currentPath !== (0, path.dirname)(currentPath); currentPath = (0, path.dirname)(currentPath)) {
             const p = this.projectRootMappings.get(currentPath);
             if (p) {
                 return p;

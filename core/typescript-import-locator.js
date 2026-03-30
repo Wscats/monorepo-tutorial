@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require("path");
 const { stripSourceCode } = require("./strip-source-code");
 const app_root = require("./app-root");

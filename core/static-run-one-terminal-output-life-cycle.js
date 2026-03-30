@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * The following life cycle's outputs are static, meaning no previous content
  * is rewritten or modified as new outputs are added. It is therefore intended

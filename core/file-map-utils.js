@@ -1,3 +1,5 @@
+'use strict';
+
 const { dirname } = require("path");
 
 function createProjectRootMappings(
@@ -24,7 +26,7 @@ function findMatchingProjectFiles(
 ) {
     for (
         let currentPath = dirname(file);
-        currentPath != dirname(currentPath);
+        currentPath !== dirname(currentPath);
         currentPath = dirname(currentPath)
     ) {
         const p = projectRootMappings.get(currentPath);

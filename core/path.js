@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require("path");
 function removeWindowsDriveLetter(osSpecificPath) {
     return osSpecificPath.replace(/^[A-Z]:/, '');
